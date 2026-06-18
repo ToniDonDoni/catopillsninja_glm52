@@ -25,6 +25,8 @@ const missedEl = document.getElementById('missed-value');
 const finalScoreEl = document.getElementById('final-score');
 const comboPopup = document.getElementById('combo-popup');
 const loadingScreen = document.getElementById('loading-screen');
+const modeBadge = document.getElementById('mode-badge');
+const inputHint = document.getElementById('input-hint');
 
 // --- Canvas DPR setup (crisp on retina) ---
 function setupCanvas() {
@@ -104,8 +106,24 @@ restartBtn?.addEventListener('click', () => game.start());
     if (camPreview) {
       camPreview.style.display = cameraActive ? 'block' : 'none';
     }
+    // Update mode badge
+    if (modeBadge) {
+      modeBadge.textContent = cameraActive ? 'CAMERA MODE' : 'MOUSE MODE';
+      modeBadge.classList.toggle('camera', cameraActive);
+      modeBadge.classList.toggle('mouse', !cameraActive);
+    }
+    // Show fallback message on start screen if camera unavailable
+    if (!cameraActive && inputHint) {
+      inputHint.innerHTML =
+        '🎮 <strong>MOUSE MODE</strong> — move your mouse to control the cursor. ' +
+        'To use camera, ensure webcam is available and allowed.';
+    }
   } catch (err) {
     console.warn('Input init error:', err);
+    if (modeBadge) {
+      modeBadge.textContent = 'MOUSE MODE';
+      modeBadge.classList.add('mouse');
+    }
   }
   // Hide loading, show start screen
   showScreen(startScreen);

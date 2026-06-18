@@ -322,3 +322,66 @@ test('canvas renders non-blank content', async ({ page }) => {
   });
   expect(hasPixels).toBeGreaterThan(50);
 });
+
+// ─── 9. Full Gameplay Loop (catch → drop → score → repeat) ──────
+
+test('cursor visible at game start without mouse movement', async ({ page }) => {
+  // RED: cursor should be visible immediately when game starts in mouse mode,
+  // without requiring the user to move the mouse first.
+  await startGame(page);
+  // Do NOT move the mouse — just check cursor state
+  const cursor = await page.evaluate(() => ({
+    visible: window.__neon.tracker.cursor.visible,
+    x: window.__neon.tracker.cursor.x,
+    y: window.__neon.tracker.cursor.y,
+  }));
+  expect(cursor.visible).toBe(true);
+  // Cursor should be somewhere on screen (not at 0,0)
+  expect(cursor.x).toBeGreaterThan(0);
+  expect(cursor.y).toBeGreaterThan(0);
+});
+
+test('full gameplay loop: catch, drop, score, repeat', async ({ page }) => {
+  await startGame(page);
+
+  // Helper: spawn a cat, catch it, drop it into the glass
+  async function catchAndDrop() {
+    const catId = await page.evaluate(() => window.__game.forceSpawn());
+    await page.evaluate((id) => window.__game.forceCatch(id), catId);
+    const ok = await page.evaluate((id) => window.__game.forceDropIntoGlass(id), catId);
+    expect(ok).toBe(true);
+    await page.waitForTimeout(150); // let game loop process
+  }
+
+  // Round 1: first catch, no combo → score = 10
+  await catchAndDrop();
+  expect(await page.evaluate(() => window.__game.getScore())).toBe(10);
+
+  // Round 2: within combo window → x2 multiplier → score = 30
+  await catchAndDrop();
+  expect(await page.evaluate(() => window.__game.getScore())).toBe(30);
+
+  // Wait past combo window (2s + buffer)
+  await page.waitForTimeout(2500);
+
+  // Round 3: combo reset → no multiplier → score = 40
+  await catchAndDrop();
+  expect(await page.evaluate(() => window.__game.getScore())).toBe(40);
+
+  // Round 4: within combo window again → x2 → score = 60
+  await catchAndDrop();
+  expect(await page.evaluate(() => window.__game.getScore())).toBe(60);
+
+  // Round 5: still within window → x2 → score = 80
+  await catchAndDrop();
+  expect(await page.evaluate(() => window.__game.getScore())).toBe(80);
+});
+
+test('mode indicator shows mouse mode when camera unavailable', async ({ page }) => {
+  await startGame(page);
+  // In ?mouse mode, a mode badge should be visible
+  const badge = await page.textContent('#mode-badge').catch(() => null);
+  // The badge should exist and indicate mouse mode
+  expect(badge).not.toBeNull();
+  expect(badge.toLowerCase()).toContain('mouse');
+});

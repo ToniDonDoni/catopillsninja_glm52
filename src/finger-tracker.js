@@ -159,6 +159,21 @@ export class FingerTracker {
     });
   }
 
+  // Show a default cursor at screen center (used on game start in mouse mode
+  // so the user sees the cursor immediately without having to move the mouse)
+  showDefault() {
+    if (this._mode === 'mouse') {
+      this.cursor.x = this.canvas.clientWidth / 2;
+      this.cursor.y = this.canvas.clientHeight / 2;
+      this.cursor.visible = true;
+      this.cursor.grabbing = true;
+    }
+  }
+
+  getMode() {
+    return this._mode;
+  }
+
   // --- Test handles (write directly to cursor) ---
   setFingerPos(x, y) {
     this.cursor.x = x;

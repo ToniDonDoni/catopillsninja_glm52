@@ -95,6 +95,9 @@ export class Game {
     this.glass = new Glass(this._glassBounds());
     this.particles.clear();
 
+    // Show default cursor so user sees it immediately (mouse mode)
+    this.tracker.showDefault();
+
     // Notify UI
     this.callbacks.onStateChange?.(GAME_STATE.PLAYING);
     this._updateHud();
