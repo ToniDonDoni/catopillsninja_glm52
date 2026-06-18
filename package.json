@@ -1,0 +1,16 @@
+{
+  "name": "neon-kitty-catcher",
+  "version": "1.0.0",
+  "description": "Acidic neon Fruit-Ninja-style browser game — catch cats with your finger via camera tracking, drop them into a glass, watch them dissolve into pills.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.0"
+  }
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>Neon Kitty Catcher</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <!-- MediaPipe Hands (classic scripts, loaded before module) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1675466862/camera_utils.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="game-root">
+    <!-- Hidden video stream consumed by tracker -->
+    <video id="cam" autoplay playsinline style="display:none"></video>
+
+    <!-- Small mirrored selfie preview (camera mode only) -->
+    <canvas id="cam-preview" width="160" height="120"></canvas>
+
+    <!-- Main game canvas (full viewport) -->
+    <canvas id="stage"></canvas>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div class="hud-panel" id="score-panel">
+        <span class="hud-label">SCORE</span>
+        <span class="hud-value" id="score-value">0</span>
+      </div>
+      <div class="hud-panel" id="timer-panel">
+        <span class="hud-label">TIME</span>
+        <span class="hud-value" id="timer-value">60</span>
+      </div>
+      <div class="hud-panel" id="missed-panel">
+        <span class="hud-label">MISSED</span>
+        <span class="hud-value" id="missed-value">0</span>
+      </div>
+    </div>
+
+    <!-- Combo popup -->
+    <div id="combo-popup"></div>
+
+    <!-- Loading screen (shown briefly during init) -->
+    <div id="loading-screen" class="overlay">
+      <div class="loading-text">Loading...</div>
+    </div>
+
+    <!-- Start screen -->
+    <div id="start-screen" class="overlay hidden">
+      <h1 class="game-title">NEON KITTY<br>CATCHER</h1>
+      <p class="game-subtitle">Catch cats with your finger. Drop them in the glass. Watch them dissolve.</p>
+      <div class="instructions">
+        <p>🐱 Move your finger in front of the camera to catch flying cats</p>
+        <p>🥤 Drag caught cats to the glass on the right</p>
+        <p>💊 Watch them transform into pills and dissolve</p>
+        <p>⚡ Chain catches for combo bonuses</p>
+      </div>
+      <button id="start-btn" class="neon-btn">START GAME</button>
+      <p class="input-hint" id="input-hint">No camera? Use mouse mode: add <code>?mouse</code> to URL</p>
+    </div>
+
+    <!-- Game over screen -->
+    <div id="game-over-screen" class="overlay hidden">
+      <h1 class="game-over-title">GAME OVER</h1>
+      <div class="final-score-block">
+        <span class="hud-label">FINAL SCORE</span>
+        <span class="final-score" id="final-score">0</span>
+      </div>
+      <button id="restart-btn" class="neon-btn">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
